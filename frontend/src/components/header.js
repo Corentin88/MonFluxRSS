@@ -61,8 +61,8 @@ export default function Header({ isScrolled = false }) {
         as="nav"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-1000 ease-in-out h-20  ${
           isScrolled
-            ? "bg-white shadow-md md:flex md:items-center"
-            : "bg-gray-800 md:bg-transparent "
+            ? "bg-gray-800 shadow-md md:flex md:items-center"
+            : "bg-orange-500 md:bg-orange-500 "
         }`}
       >
         {({ open, close }) => (
@@ -85,7 +85,7 @@ export default function Header({ isScrolled = false }) {
                       ${
                         isScrolled
                           ? "text-blue-900 hover:bg-blue-900 hover:text-white focus:ring-blue-900"
-                          : "text-white hover:bg-blue-900 focus:ring-white"
+                          : "text-gray-800 hover:text-white hover:bg-gray-500 focus:ring-gray-900"
                       }
                     `}
                   >
@@ -110,7 +110,7 @@ export default function Header({ isScrolled = false }) {
                   <div className="flex-1 md:flex-none text-center md:text-left">
                     <div
                       className={`text-2xl md:text-3xl font-bold md:ml-4 ${
-                        isScrolled ? "text-blue-900" : "text-white"
+                        isScrolled ? "text-blue-900" : "text-gray-800"
                       }`}
                       style={{ fontFamily: "var(--font-jetbrains)" }}
                     >
@@ -131,8 +131,8 @@ export default function Header({ isScrolled = false }) {
                             item.current
                               ? "bg-gray-900 text-white border-2"
                               : isScrolled
-                                ? "text-blue-900 hover:bg-blue-900 hover:text-white"
-                                : "text-white hover:bg-gray-900 hover:text-white"
+                                ? "text-blue-900 hover:bg-blue-900 hover:text-black"
+                                : "text-gray-800 hover:bg-gray-500 hover:text-white"
                           )}
                         >
                           {item.name}
@@ -156,7 +156,7 @@ export default function Header({ isScrolled = false }) {
             {/* Panneau du menu mobile (visible uniquement sur petits écrans) */}
             <DisclosurePanel
               className={`md:hidden absolute w-full left-0 top-16 right-0 z-20 transition-all duration-1000 ease-out ${
-                isScrolled ? "bg-white" : "bg-gray-800"
+                isScrolled ? "bg-white" : "bg-orange-500"
               }`}
             >
               <div className="space-y-1 px-2 pt-2 pb-3 flex flex-col">
@@ -172,7 +172,7 @@ export default function Header({ isScrolled = false }) {
                         ? "bg-gray-900 text-white border-2"
                         : isScrolled
                           ? "text-blue-900 hover:bg-blue-900 hover:text-white"
-                          : "text-white hover:bg-gray-900 hover:text-white"
+                          : "text-gray-800 hover:bg-gray-500 hover:text-white"
                     )}
                   >
                     {item.name}
