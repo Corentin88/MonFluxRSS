@@ -60,6 +60,11 @@ Ce projet Symfony permet de récupérer automatiquement des articles depuis des 
    php bin/console doctrine:fixtures:load
    ```
 
+6. **Démarrer le serveur de développement** :
+   ```bash
+   php bin/console symfony serve
+   ```
+
 ## 🚀 Utilisation
 
 ### Importer les flux RSS
@@ -95,8 +100,67 @@ php bin/console app:import-rss
 
 - `app:import-rss` : Importe les articles depuis les flux RSS configurés
 
+## 🌐 API Platform
+
+Ce projet utilise [API Platform](https://api-platform.com/), un framework puissant pour construire des API REST et GraphQL modernes.
+
+### Points d'accès API
+
+L'API est disponible à l'adresse : `http://localhost:8000/api`
+
+#### Collection Operations
+
+- **Sources de flux (FeedSource)**
+  - `GET /api/feed_sources` - Liste toutes les sources de flux
+  - `POST /api/feed_sources` - Crée une nouvelle source de flux
+
+- **Articles**
+  - `GET /api/articles` - Liste tous les articles
+  - `POST /api/articles` - Crée un nouvel article (utile pour les tests)
+
+#### Item Operations
+
+- **Source de flux spécifique**
+  - `GET /api/feed_sources/{id}` - Affiche une source de flux spécifique
+  - `PUT /api/feed_sources/{id}` - Met à jour une source de flux
+  - `DELETE /api/feed_sources/{id}` - Supprime une source de flux
+
+- **Article spécifique**
+  - `GET /api/articles/{id}` - Affiche un article spécifique
+  - `PUT /api/articles/{id}` - Met à jour un article
+  - `DELETE /api/articles/{id}` - Supprime un article
+
+### Filtres disponibles
+
+Les endpoints de collection supportent plusieurs filtres :
+
+- `?page=1` - Pagination (30 éléments par page par défaut)
+- `?order[property]=asc|desc` - Tri par propriété
+- `?property=value` - Filtre par valeur exacte
+- `?property[]=gte:value` - Filtre avec opérateurs (gt, gte, lt, lte, between)
 
 
+### Configuration avancée
 
+La configuration d'API Platform se trouve dans :
+- `config/packages/api_platform.yaml` - Configuration principale
+- `config/routes/api_platform.yaml` - Routes de l'API
 
+### Exemple de requête
 
+# Créer une nouvelle source de flux
+POST http://localhost:8000/api/feed_sources
+Content-Type: application/json
+
+{
+  "name": "Le Monde",
+  "url": "https://www.lemonde.fr/rss/une.xml"
+}
+Le champ createdAt est automatiquement défini côté serveur, inutile de l'envoyer.
+Pour associer des articles à une source, utilisez les IRIs internes à l’API, par exemple :
+"articles": ["/api/articles/1", "/api/articles/2"]
+N’utilisez jamais d’URL externe (ex : "https://example.com") dans ce champ.
+
+### Sécurité
+
+Par défaut, l'API est accessible en lecture seule. Pour les opérations d'écriture, vous devrez configurer l'authentification selon vos besoins.
