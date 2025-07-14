@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: FeedSourceRepository::class)]
-#[ApiResource]
+#[ApiResource(formats: ['jsonld', 'json'])]
 class FeedSource
 {
     #[ORM\Id]
@@ -31,7 +31,7 @@ class FeedSource
      */
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'feedSource')]
     private Collection $articles;
-    
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
