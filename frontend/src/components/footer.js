@@ -32,7 +32,7 @@ export default function Footer({ className = '' }) {
                   className="h-6 w-auto mx-1"
                 />
                 <span className="mx-1">et</span>
-                <span className="text-blue-400 font-semibold">Tailwind CSS</span>
+                <span className="text-gray-800 font-semibold">Tailwind CSS</span>
               </div>
             </div>
           </div>

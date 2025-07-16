@@ -1,34 +1,29 @@
+// Directive indiquant que ce composant doit s'exécuter côté client
 "use client";
+
 // Importation des composants nécessaires depuis les bibliothèques externes
 // @headlessui/react fournit des composants UI accessibles et sans style
 import {
-  Disclosure,          // Pour les éléments dépliables/rétractables
-  DisclosureButton,    // Bouton pour contrôler l'affichage
-  DisclosurePanel,     // Contenu à afficher/masquer
-  Menu,                // Pour les menus déroulants
-  MenuButton,          // Bouton pour ouvrir le menu
-  MenuItem,            // Élément individuel du menu
-  MenuItems,           // Conteneur des éléments du menu
+  Disclosure, // Pour les éléments dépliables/rétractables
+  DisclosureButton, // Bouton pour contrôler l'affichage
+  DisclosurePanel, // Contenu à afficher/masquer
+  Menu, // Pour les menus déroulants
+  MenuButton, // Bouton pour ouvrir le menu
+  MenuItem, // Élément individuel du menu
+  MenuItems, // Conteneur des éléments du menu
 } from "@headlessui/react";
-// @heroicons/react fournit des icônes SVG
+// Importation des icônes depuis la bibliothèque Heroicons
+// Ces icônes sont utilisées pour le menu burger, les notifications et la croix de fermeture
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
 
-/**
- * Tableau contenant les éléments de navigation principaux
- * Chaque objet représente un élément du menu avec :
- * - name: le texte affiché dans le menu
- * - href: l'ancre vers laquelle le lien pointe
- * - current: booléen indiquant si l'élément est actif
- */
-const navigation = [
-  { name: "Présentation", href: "#presentation", current: false },
-  { name: "Qualités", href: "#quality", current: false },
-  { name: "Projets", href: "#portfolio", current: false },
-  { name: "Parcours", href: "#timeline", current: false },
-  { name: "CV", href: "#cvLien", current: false },
-  { name: "Contact", href: "#contact", current: false },
-];
+// Importation des hooks React nécessaires
+import { useEffect, useState } from "react";
+
+// Importation du contexte d'authentification personnalisé
+import { useAuth } from "@/context/AuthContext";
+
+// Importation du routeur Next.js pour la navigation
+import { useRouter } from "next/navigation";
 
 /**
  * Fonction utilitaire pour gérer les noms de classes conditionnels
@@ -48,14 +43,38 @@ function classNames(...classes) {
  * @returns {JSX.Element} Le rendu du composant Header
  */
 export default function Header({ isScrolled = false }) {
+  // Utilisation du hook d'authentification personnalisé
+  const { isLogged, login, logout } = useAuth();
+
+  // Initialisation du routeur Next.js
+  const router = useRouter();
+
+  /**
+   * Tableau contenant les éléments de navigation principaux
+   * Chaque objet représente un élément du menu avec :
+   * - name: le texte affiché dans le menu
+   * - href: l'ancre vers laquelle le lien pointe
+   * - current: booléen indiquant si l'élément est actif
+   */
+  const navigation = [
+    { name: "Tous les articles", href: "/articles", current: false }, // ancre qui scrolle vers la liste
+    { name: "Sources", href: "/sources", current: false }, // tableau / cartes des flux
+    { name: "Installation", href: "/installation", current: false },
+  ];
+
+  // Ajout conditionnel du lien d'administration si l'utilisateur est connecté
+  const nav = isLogged
+    ? [...navigation, { name: "Ajouter un flux", href: "/admin" }]
+    : navigation;
+
+  // Rendu du composant Header
   return (
-    // Conteneur principal du header
     <header>
       {/* 
         Barre de navigation responsive avec fond qui change selon le défilement
         - Fixe en haut de l'écran
         - Hauteur de 5rem (h-20)
-        - Transition fluide des couleurs
+        - Transition fluide des couleurs selon le défilement
       */}
       <Disclosure
         as="nav"
@@ -85,7 +104,7 @@ export default function Header({ isScrolled = false }) {
                       ${
                         isScrolled
                           ? "text-blue-900 hover:bg-blue-900 hover:text-white focus:ring-blue-900"
-                          : "text-gray-800 hover:text-white hover:bg-gray-500 focus:ring-gray-900"
+                          : "text-gray-800 hover:text-white hover:bg-gray-400 focus:ring-gray-900"
                       }
                     `}
                   >
@@ -121,7 +140,7 @@ export default function Header({ isScrolled = false }) {
                   {/* Liens de navigation (cachés sur mobile) */}
                   <div className="hidden md:ml-6 md:block">
                     <div className="flex items-center space-x-4 md:space-x-2">
-                      {navigation.map((item) => (
+                      {nav.map((item) => (
                         <a
                           key={item.name}
                           href={item.href}
@@ -131,13 +150,32 @@ export default function Header({ isScrolled = false }) {
                             item.current
                               ? "bg-gray-900 text-white border-2"
                               : isScrolled
-                                ? "text-blue-900 hover:bg-blue-900 hover:text-black"
-                                : "text-gray-800 hover:bg-gray-500 hover:text-white"
+                              ? "text-blue-900 hover:bg-blue-900 hover:text-black"
+                              : "text-gray-800 hover:bg-gray-400 hover:text-white"
                           )}
                         >
                           {item.name}
                         </a>
                       ))}
+                      {/* Bouton de connexion/déconnexion */}
+                      {isLogged ? (
+                        <button
+                          onClick={logout}
+                          
+                          className="text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                        >
+                          Déconnexion
+                        </button>
+                      ) : (
+                        <button
+                          as="a"
+                          href="/login"
+                          className="px-4 py-2 text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                          
+                        >
+                          Se connecter
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -160,7 +198,7 @@ export default function Header({ isScrolled = false }) {
               }`}
             >
               <div className="space-y-1 px-2 pt-2 pb-3 flex flex-col">
-                {navigation.map((item) => (
+                {nav.map((item) => (
                   <DisclosureButton
                     key={item.name}
                     as="a"
@@ -171,52 +209,73 @@ export default function Header({ isScrolled = false }) {
                       item.current
                         ? "bg-gray-900 text-white border-2"
                         : isScrolled
-                          ? "text-blue-900 hover:bg-blue-900 hover:text-white"
-                          : "text-gray-800 hover:bg-gray-500 hover:text-white"
+                        ? "text-blue-900 hover:bg-blue-900 hover:text-white"
+                        : "text-gray-800 hover:bg-gray-400 hover:text-white"
                     )}
                   >
                     {item.name}
                   </DisclosureButton>
                 ))}
+                {/* Bouton de connexion/déconnexion pour la version mobile */}
+                {isLogged ? (
+                  <button
+                    onClick={logout}
+                    
+                    className="px-4 py-2 text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                  >
+                    Déconnexion
+                  </button>
+                ) : (
+                  <button
+                    as="a"
+                    href="/login"
+                    
+                    className="px-4 py-2 text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                  >
+                    Se connecter
+                  </button>
+                )}
               </div>
             </DisclosurePanel>
           </>
         )}
       </Disclosure>
+      {/* Espace réservé pour compenser la hauteur fixe du header et éviter que le contenu ne soit masqué */}
+      <div className="h-20"></div>
     </header>
   );
 }
 
 /**
- * Composant pour gérer la fermeture du menu mobile
+ * Composant utilitaire pour gérer la fermeture du menu mobile avec la touche Échap
  * @param {Object} props - Propriétés du composant
- * @param {boolean} props.open - État d'ouverture du menu
+ * @param {boolean} props.open - Indique si le menu mobile est ouvert
  * @param {Function} props.close - Fonction pour fermer le menu
  * @returns {null} Ne rend rien (composant utilitaire)
  */
 function MobileMenuHandler({ open, close }) {
+  // Effet pour gérer la touche Échap
   useEffect(() => {
     /**
-     * Gère l'appui sur la touche Échap pour fermer le menu
-     * @param {KeyboardEvent} event - Événement clavier
+     * Gère l'événement de pression de touche
+     * @param {KeyboardEvent} event - L'événement de pression de touche
      */
-    const handleEscape = (event) => {
+    function handleKeyDown(event) {
+      // Si la touche Échap est pressée et que le menu est ouvert
       if (event.key === "Escape" && open) {
-        close();
+        close(); // Ferme le menu
       }
-    };
-
-    // Ajouter l'écouteur d'événement seulement si le menu est ouvert
-    if (open) {
-      document.addEventListener("keydown", handleEscape);
     }
 
-    // Nettoyage : retirer l'écouteur d'événement lors du démontage du composant
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [open, close]);
+    // Ajoute l'écouteur d'événement au chargement du composant
+    window.addEventListener("keydown", handleKeyDown);
 
-  // Ce composant ne rend rien dans le DOM
+    // Nettoie l'écouteur d'événement lors du démontage du composant
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, close]); // Dépendances de l'effet
+
+  // Ce composant ne rend rien d'UI, il gère uniquement le comportement
   return null;
 }

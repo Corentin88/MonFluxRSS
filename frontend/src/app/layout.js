@@ -1,6 +1,7 @@
 import "./globals.css";
-import Header from "../components/header";
-import Footer from "../components/footer";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
   title: "Mon Flux RSS",
@@ -11,11 +12,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer className="mt-auto" />
+          <AuthProvider>
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer className="mt-auto" />
+          </AuthProvider>
       </body>
     </html>
   );
