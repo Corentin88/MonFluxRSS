@@ -25,3 +25,40 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.description-content {
+  text-align: justify; /* centre le contenu inline à l’intérieur */
+  max-height: 500px;
+  overflow: hidden;
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  padding-bottom: 20px;
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
+  word-break: normal;
+}
+
+.description-content::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px; /* plus haut pour un fondu progressif */
+  pointer-events: none; /* évite que ça gêne la sélection du texte */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    white 100%
+  );
+}
+
+.description-content img {
+  display: block;
+  max-width: 50%;
+  height: auto;
+  border-radius: 5px;
+  overflow: hidden;        /* pas forcément utile ici */
+  margin: auto;          /* centre l’image horizontalement */
+}

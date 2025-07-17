@@ -50,6 +50,10 @@ export default function ArticleFlux() {
    * Gère la soumission du formulaire de connexion
    * @param {Event} e - L'événement de soumission du formulaire
    */
+  function truncateText(text, maxLength = 200) {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "…" : text;
+  }
   const fetchArticles = async (page = 1) => {
     setLoading(true);
     setError("");
@@ -112,17 +116,19 @@ export default function ArticleFlux() {
               key={id}
               className="cursor-pointer border p-4 rounded bg-gray-50 hover:bg-gray-200 hover:scale-104 transition-all duration-200 w-full shadow-lg"
             >
+              <a href={link} target="_blank" rel="noopener noreferrer">
               <h2 className="text-lg font-semibold">{title}</h2>
+              
               <p className="text-sm text-gray-600">
                 {new Date(publishedAt).toLocaleDateString()}
               </p>
-              <p className="mt-1 text-gray-700">{description}</p>
+              <p className="description-content mt-1 text-gray-700 text-sm bg-gray-50" dangerouslySetInnerHTML={{ __html: description }} />
               <p className="mt-2 text-xs italic text-gray-600">
                 Source: {feedSource}
               </p>
               <p className="mt-2 text-xs italic text-gray-600 ">
-                Lien: <a target="_blank" rel="noopener noreferrer" href={link}>{link}</a>
-              </p>
+                Lien: {link}
+              </p></a>
             </li>
           )
         )}
@@ -144,7 +150,7 @@ export default function ArticleFlux() {
               ${
                 page === currentPage
                   ? "bg-orange-500 text-white"
-                  : "bg-gray-500 text-white hover:bg-gray-600"
+                  : "bg-gray-500 text-white hover:bg-orange-400"
               }`}
             >
               {page}
