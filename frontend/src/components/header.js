@@ -57,7 +57,7 @@ export default function Header({ isScrolled = false }) {
    * - current: booléen indiquant si l'élément est actif
    */
   const navigation = [
-    { name: "Tous les articles", href: "/articles", current: false }, // ancre qui scrolle vers la liste
+    { name: "Tous les articles", href: "/", current: false }, // ancre qui scrolle vers la liste
     { name: "Sources", href: "/sources", current: false }, // tableau / cartes des flux
     { name: "Installation", href: "/installation", current: false },
   ];
