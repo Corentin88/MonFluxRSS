@@ -113,7 +113,7 @@ Ce projet utilise [API Platform](https://api-platform.com/), un framework puissa
 
 ### Points d'accès API
 
-L'API est disponible à l'adresse : `http://localhost:8000/api`
+L'API est disponible à l'adresse : `http://localhost:8000/api/docs`
 
 #### Collection Operations
 

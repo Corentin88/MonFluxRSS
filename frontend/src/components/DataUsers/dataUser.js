@@ -3,6 +3,7 @@
 import { useAuth } from "@/context/AuthContext";  // Hook personnalisé pour la gestion de l'authentification
 import { useState } from "react";  // Hook d'état de React
 import { useRouter } from "next/navigation";  // Hook de routage de Next.js
+import api from "@/services/api";  // Notre nouveau service d'API
 
 /**
  * Composant LoginBox - Gère le formulaire de connexion utilisateur
@@ -17,7 +18,7 @@ export default function LoginBox({ onLogin }) {
   const [error, setError] = useState("");  // État pour stocker les messages d'erreur
   
   // Récupération des fonctions et états du contexte d'authentification
-  const { isLogged, login, logout } = useAuth();
+  const { isLogged, login } = useAuth();
   
   // Initialisation du routeur pour la navigation
   const router = useRouter();
@@ -32,18 +33,8 @@ export default function LoginBox({ onLogin }) {
     setError("");  // Réinitialise les erreurs précédentes
 
     try {
-      // Envoi de la requête de connexion à l'API
-      const res = await fetch("http://localhost:8000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),  // Envoi des identifiants
-      });
-
-      // Vérification de la réponse du serveur
-      if (!res.ok) throw new Error("Identifiants invalides");
-
-      // Extraction du token JWT de la réponse
-      const { token } = await res.json();
+      // Utilisation du service d'API pour la connexion
+      const { token } = await api.post("/api/login", { email, password });
 
       // 1️⃣ Stockage du JWT via le contexte d'authentification
       login(token);
@@ -59,7 +50,7 @@ export default function LoginBox({ onLogin }) {
       setPassword("");
     } catch (err) {
       // Gestion des erreurs
-      setError(err.message);
+      setError(err.message || "Identifiants invalides");
     } finally {
       // Désactivation de l'état de chargement dans tous les cas
       setLoading(false);

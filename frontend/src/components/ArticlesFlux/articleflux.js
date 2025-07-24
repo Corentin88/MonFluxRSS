@@ -17,7 +17,7 @@ export default function ArticleFlux() {
   const [prevPage, setPrevPage] = useState(""); // État pour stocker le lien de la page précédente
   const [currentPage, setCurrentPage] = useState(1); // État pour stocker le numéro de la page actuelle
   const [totalPages, setTotalPages] = useState(0); // État pour stocker le nombre total de pages
-  const itemsPerPage = 10;
+  const itemsPerPage = 30;
   // Initialisation du routeur pour la navigation
   const router = useRouter();
   const getPageNumbers = () => {
@@ -124,7 +124,7 @@ export default function ArticleFlux() {
               </p>
               <p className="description-content mt-1 text-gray-700 text-sm bg-gray-50" dangerouslySetInnerHTML={{ __html: description }} />
               <p className="mt-2 text-xs italic text-gray-600">
-                Source: {feedSource}
+                Source: {feedSource?.name || 'Source inconnue'}
               </p>
               <p className="mt-2 text-xs italic text-gray-600 ">
                 Lien: {link}

@@ -6,12 +6,11 @@ use App\Repository\ArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
-
-
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ["groups" => ["article:read"]], order: ["publishedAt" => "DESC"])]
 class Article
 {
     #[ORM\Id]
@@ -20,24 +19,31 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["article:read"])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["article:read"])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["article:read"])]
     private ?string $link = null;
 
     #[ORM\Column]
+    #[Groups(["article:read"])]
     private ?\DateTimeImmutable $publishedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["article:read"])]
     private ?string $guid = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["article:read"])]
     private ?FeedSource $feedSource = null;
 
+    #[Groups(["article:read"])]
     public function getId(): ?int
     {
         return $this->id;
