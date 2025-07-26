@@ -51,7 +51,7 @@ export default function AjoutFlux() {
           <label className="block font-medium">Nom</label>
           <input
             type="text"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-orange-50"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -62,7 +62,7 @@ export default function AjoutFlux() {
           <label className="block font-medium">URL</label>
           <input
             type="url"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-orange-50"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
@@ -71,7 +71,7 @@ export default function AjoutFlux() {
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-orange-500 hover:bg-orange-600 text-black font-bold text-lg hover:scale-105 transition-all duration-300 px-4 py-2 rounded"
         >
           Ajouter
         </button>
@@ -83,7 +83,7 @@ export default function AjoutFlux() {
       )}{" "}
 
       <div className="mt-6 text-center">
-        <Link href="/deleteFlux" className="text-blue-600 underline hover:text-blue-800">
+        <Link href="/deleteFlux" className="text-orange-600 underline hover:text-orange-800">
           Supprimer un flux
         </Link>
       </div>

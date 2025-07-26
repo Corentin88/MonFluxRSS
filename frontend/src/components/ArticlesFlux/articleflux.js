@@ -103,21 +103,21 @@ export default function ArticleFlux() {
   };
   // Rendu du formulaire de connexion
   return (
-    <div className="flex flex-col items-center justify-center w-full px-4">
+    <div className="flex flex-col items-center justify-center w-full px-4 ">
       <h1 className="text-xl font-bold mb-4 ">Articles</h1>
 
       {loading && <p>Chargement...</p>}
       {error && <p className="text-gray-800">{error}</p>}
 
-      <ul className="space-y-4 w-full break-all inline-block">
+      <ul className="space-y-4 w-full break-words inline-block">
         {articles.map(
           ({ id, title, publishedAt, description, feedSource, link }) => (
             <li
               key={id}
-              className="cursor-pointer border p-4 rounded bg-gray-50 hover:bg-gray-200 hover:scale-104 transition-all duration-200 w-full shadow-lg"
+              className="cursor-pointer border p-4 rounded bg-orange-50 hover:bg-orange-200 hover:scale-104 transition-all duration-200 w-full shadow-lg"
             >
               <a href={link} target="_blank" rel="noopener noreferrer">
-              <h2 className="text-lg font-semibold">{title}</h2>
+              <h2 className="text-lg font-semibold ">{title}</h2>
               
               <p className="text-sm text-gray-600">
                 {new Date(publishedAt).toLocaleDateString()}

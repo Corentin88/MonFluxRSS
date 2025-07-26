@@ -80,7 +80,7 @@ export default function DeleteFlux() {
           </label>
           <select
             id="feedSelect"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded bg-orange-50"
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
             required

@@ -2,7 +2,7 @@
 import LoginBox from "@/components/DataUsers/dataUser"
 
 export default function LoginPage() {
- 
+//  console.log("render loginpage")
 
   return (
     <main className="pt-24 max-w-xl mx-auto px-4">
