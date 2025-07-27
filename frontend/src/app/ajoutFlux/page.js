@@ -7,6 +7,7 @@ export default function AjoutFlux() {
   const [name, setName] = useState("");
   const [url, setUrl] = useState("");
   const [message, setMessage] = useState(null);
+  const [type, setType] = useState("");
 
   const router = useRouter();
 
@@ -22,7 +23,7 @@ export default function AjoutFlux() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
-        body: JSON.stringify({ name, url }),
+        body: JSON.stringify({ name, url, type }),
       });
 
       if (!response.ok) {
@@ -35,6 +36,7 @@ export default function AjoutFlux() {
       setMessage("Flux ajouté avec succès !");
       setName("");
       setUrl("");
+      setType("");
       setTimeout(() => {
         router.push("/");
       }, 2000);
@@ -68,7 +70,22 @@ export default function AjoutFlux() {
             required
           />
         </div>
-
+        <div>
+          <label className="block font-medium">Type</label>
+          <select
+            name="type"
+            className="w-full p-2 border rounded bg-orange-50"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            required
+          >
+            <option value="">-- Sélectionnez un type --</option>
+            <option value="veille techno">Veille techno</option>
+            <option value="jeux video">Jeux vidéo</option>
+            <option value="cuisine">Cuisine</option>
+            <option value="science et spatial">Science et spatial</option>
+          </select>
+        </div>
         <button
           type="submit"
           className="bg-orange-500 hover:bg-orange-600 text-black font-bold text-lg hover:scale-105 transition-all duration-300 px-4 py-2 rounded"
@@ -81,9 +98,11 @@ export default function AjoutFlux() {
           {message}
         </div>
       )}{" "}
-
       <div className="mt-6 text-center">
-        <Link href="/deleteFlux" className="text-orange-600 underline hover:text-orange-800">
+        <Link
+          href="/deleteFlux"
+          className="text-orange-600 underline hover:text-orange-800"
+        >
           Supprimer un flux
         </Link>
       </div>

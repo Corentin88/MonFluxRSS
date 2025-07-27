@@ -2,7 +2,7 @@
 // Importation des dépendances nécessaires
 import { useState, useEffect } from "react"; // Hook d'état de React
 import { useRouter } from "next/navigation"; // Hook de routage de Next.js
-
+import SelectFlux from "../SelecteurFlux/SelectFlux";
 /**
  * Composant LoginBox - Gère le formulaire de connexion utilisateur
  * @param {Function} onLogin - Callback exécuté après une connexion réussie
@@ -18,6 +18,7 @@ export default function ArticleFlux() {
   const [currentPage, setCurrentPage] = useState(1); // État pour stocker le numéro de la page actuelle
   const [totalPages, setTotalPages] = useState(0); // État pour stocker le nombre total de pages
   const itemsPerPage = 30;
+  const [selectedType, setSelectedType] = useState("veille techno");
   // Initialisation du routeur pour la navigation
   const router = useRouter();
   const getPageNumbers = () => {
@@ -54,7 +55,11 @@ export default function ArticleFlux() {
     if (!text) return "";
     return text.length > maxLength ? text.slice(0, maxLength) + "…" : text;
   }
-  const fetchArticles = async (page = 1) => {
+  const fetchArticles = async (page = 1, type = selectedType) => {
+    const url = new URL("http://localhost:8000/api/articles");
+    url.searchParams.set("page", page);
+    if (type) url.searchParams.set("feedSource.type", type);
+
     setLoading(true);
     setError("");
     let pageNumber = page;
@@ -70,13 +75,10 @@ export default function ArticleFlux() {
     }
 
     try {
-      const res = await fetch(
-        `http://localhost:8000/api/articles?page=${pageNumber}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
 
       if (!res.ok) throw new Error("Articles non trouvés");
 
@@ -96,13 +98,18 @@ export default function ArticleFlux() {
     }
   };
   useEffect(() => {
-    fetchArticles(1);
-  }, []);
+    fetchArticles(1, selectedType);
+  }, [selectedType]);
   const handleClick = (articleId) => {
     router.push(`/articles/${articleId}`);
   };
   // Rendu du formulaire de connexion
   return (
+    <>
+    {/* Intégration de SelectFlux */}
+    <div className="mb-4">
+    <SelectFlux value={selectedType} onChange={setSelectedType} />
+    </div>
     <div className="flex flex-col items-center justify-center w-full px-4 ">
       <h1 className="text-xl font-bold mb-4 ">Articles</h1>
 
@@ -117,18 +124,22 @@ export default function ArticleFlux() {
               className="cursor-pointer border p-4 rounded bg-orange-50 hover:bg-orange-200 hover:scale-104 transition-all duration-200 w-full shadow-lg"
             >
               <a href={link} target="_blank" rel="noopener noreferrer">
-              <h2 className="text-lg font-semibold ">{title}</h2>
-              
-              <p className="text-sm text-gray-600">
-                {new Date(publishedAt).toLocaleDateString()}
-              </p>
-              <p className="description-content mt-1 text-gray-700 text-sm bg-gray-50" dangerouslySetInnerHTML={{ __html: description }} />
-              <p className="mt-2 text-xs italic text-gray-600">
-                Source: {feedSource?.name || 'Source inconnue'}
-              </p>
-              <p className="mt-2 text-xs italic text-gray-600 ">
-                Lien: {link}
-              </p></a>
+                <h2 className="text-lg font-semibold ">{title}</h2>
+
+                <p className="text-sm text-gray-600">
+                  {new Date(publishedAt).toLocaleDateString()}
+                </p>
+                <p
+                  className="description-content mt-1 text-gray-700 text-sm bg-gray-50"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+                <p className="mt-2 text-xs italic text-gray-600">
+                  Source: {feedSource?.name || "Source inconnue"}
+                </p>
+                <p className="mt-2 text-xs italic text-gray-600 ">
+                  Lien: {link}
+                </p>
+              </a>
             </li>
           )
         )}
@@ -159,5 +170,6 @@ export default function ArticleFlux() {
         )}
       </div>
     </div>
+    </>
   );
 }

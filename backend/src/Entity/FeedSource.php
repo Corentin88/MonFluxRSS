@@ -12,6 +12,10 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
 
 #[ORM\Entity(repositoryClass: FeedSourceRepository::class)]
 #[ApiResource(
@@ -21,8 +25,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(security: "is_granted('ROLE_ADMIN')"),
         new Post(security: "is_granted('ROLE_ADMIN')"),
         new Delete(security: "is_granted('ROLE_ADMIN')")
-    ]
+    ],
+    normalizationContext: ['groups' => ['feedsource:read']],
+    denormalizationContext: ['groups' => ['feedsource:write']],
+    filters: ['search_filter'],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['type' => 'exact'])]
 class FeedSource
 {
     #[ORM\Id]
@@ -31,12 +39,17 @@ class FeedSource
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["article:read"])]
+    #[Groups(["feedsource:read","feedsource:write","article:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(["article:read"])]
+    #[Groups(["feedsource:read","feedsource:write","article:read"])]
     private ?string $url = null;
+
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['feedsource:read', 'feedsource:write','article:read'])]
+    #[Assert\Choice(choices: ['veille techno', 'jeux video', 'cuisine', 'science et spatial'])]
+    private ?string $type = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -77,6 +90,18 @@ class FeedSource
     public function setUrl(string $url): static
     {
         $this->url = $url;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

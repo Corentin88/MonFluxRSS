@@ -7,6 +7,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
+#[ApiFilter(SearchFilter::class, properties: ['feedSource.type' => 'exact'])]
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
