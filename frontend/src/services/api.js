@@ -22,30 +22,46 @@ async function fetchWithAuth(url, options = {}) {
     const response = await fetch(`http://localhost:8000${url}`, {
       ...options,
       headers,
+      credentials: 'include', // Important pour les cookies de session
     });
 
     // Si la réponse est 401 (Non autorisé), déconnecter l'utilisateur
     if (response.status === 401) {
       // Vérifier si on est côté client avant d'utiliser localStorage
       if (typeof window !== 'undefined') {
+        // Supprimer le token du localStorage
         localStorage.removeItem("jwt");
-        // Recharger la page pour forcer la mise à jour de l'état d'authentification
-        window.location.href = '/login';
+        
+        // Appeler la fonction de déconnexion du contexte d'authentification
+        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+          // Rediriger vers la page de connexion
+          window.location.href = '/login';
+        }
       }
-      throw new Error("Session expirée. Veuillez vous reconnecter.");
+      
+      // Lancer une erreur avec un message clair
+      const error = new Error("Votre session a expiré. Veuillez vous reconnecter.");
+      error.status = 401;
+      throw error;
     }
 
     // Si la réponse n'est pas OK, lancer une erreur avec le message d'erreur
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Une erreur est survenue');
+      const error = new Error(errorData.message || 'Une erreur est survenue');
+      error.status = response.status;
+      throw error;
     }
 
     // Si tout va bien, retourner les données JSON
     return response.json();
   } catch (error) {
     console.error('API call failed:', error);
-    throw error;
+    // Si ce n'est pas une erreur 401, on la propage
+    if (error.status !== 401) {
+      throw error;
+    }
+    // Pour les erreurs 401, on a déjà redirigé, on ne fait rien de plus
   }
 }
 
