@@ -9,12 +9,16 @@ use ApiPlatform\Metadata\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use App\Service\Filters\OrSearchFilter;
 
-#[ApiFilter(SearchFilter::class, properties: ['feedSource.type' => 'exact'])]
+
+
 
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(normalizationContext: ["groups" => ["article:read"]], order: ["publishedAt" => "DESC"])]
+#[ApiFilter(OrSearchFilter::class)]
+#[ApiFilter(SearchFilter::class, properties: ['feedSource.type' => 'exact'])]
 class Article
 {
     #[ORM\Id]

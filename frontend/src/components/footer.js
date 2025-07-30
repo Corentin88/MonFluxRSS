@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Composant Footer
  * Affiche le pied de page du site avec le copyright et le crédit de développement

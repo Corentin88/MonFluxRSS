@@ -274,7 +274,7 @@ export default function Header() {
                       "rounded-md px-3 py-2 text-lg font-medium transition-colors duration-300",
                       item.current
                         ? "bg-gray-900 text-white border-2"
-                        : "text-gray-800 hover:bg-gray-400 hover:text-white"
+                        : "text-gray-800 hover:bg-orange-200 hover:text-black text-center "
                     )}
                   >
                     {item.name}
@@ -288,7 +288,7 @@ export default function Header() {
                         logout();
                         router.push("/");
                       }}
-                      className="px-4 py-2 text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                      className="px-4 py-2 text-center rounded-lg hover:bg-orange-200 hover:text-black"
                     >
                       Déconnexion
                     </button>
@@ -357,7 +357,7 @@ export default function Header() {
                 ) : (
                   <button
                     onClick={() => router.push("/login")}
-                    className="px-4 py-2 text-center rounded-lg hover:bg-gray-400 hover:text-white"
+                    className="px-4 py-2 text-center rounded-lg hover:bg-orange-200 hover:text-black"
                   >
                     Se connecter
                   </button>
