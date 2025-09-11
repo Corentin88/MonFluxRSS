@@ -27,11 +27,21 @@ export default function Footer({ className = '' }) {
               <span className="mr-2">Développé avec</span>
               <div className="flex items-center">
                 <Image 
-                  src="/next.svg" 
+                  src="/image/next.svg" 
                   alt="Next.js" 
-                  width={60} 
-                  height={24} 
-                  className="h-6 w-auto mx-1"
+                  width={0}
+                  height={0}
+                  style={{ width: 'auto', height: '15px' }}
+                  className="mx-1"
+                />
+                <span className="mx-1">,</span>
+                <Image 
+                  src="/image/Symfony.svg" 
+                  alt="Symfony" 
+                  width={0}
+                  height={0}
+                  style={{ width: 'auto', height: '30px' }}
+                  className="mx-1"
                 />
                 <span className="mx-1">et</span>
                 <span className="text-gray-800 font-semibold">Tailwind CSS</span>

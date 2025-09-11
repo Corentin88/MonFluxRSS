@@ -19,10 +19,24 @@ export default function DeleteFlux() {
         });
         if (!response.ok) throw new Error("Erreur lors du chargement des flux");
         const data = await response.json();
-        // console.log(data);
-        setFeeds(data["member"] || []); // selon la structure de ta réponse API Platform
-        if (data["member"] && data["member"].length > 0) {
-          setSelectedId(data["member"][0].id.toString());
+        const feedList = data["member"] || [];
+
+        // Extraction des IDs depuis @id
+        const feedsWithId = feedList.map((feed) => {
+          if (feed.id) return feed;
+          if (feed["@id"]) {
+            const match = feed["@id"].match(/\/(\d+)$/);
+            if (match) {
+              return { ...feed, id: match[1] };
+            }
+          }
+          return feed;
+        });
+
+        setFeeds(feedsWithId);
+
+        if (feedsWithId.length > 0) {
+          setSelectedId(feedsWithId[0].id?.toString() || "");
         }
       } catch (err) {
         setMessage(err.message);
@@ -30,6 +44,17 @@ export default function DeleteFlux() {
     }
     fetchFeeds();
   }, []);
+
+  // Affichage dans la console pour debug
+  // useEffect(() => {
+  //   if (feeds.length > 0) {
+  //     console.log("Premier feed:", feeds[0]);
+  //     console.log(
+  //       "Feeds IDs:",
+  //       feeds.map((f) => f.id)
+  //     );
+  //   }
+  // }, [feeds]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,19 +64,31 @@ export default function DeleteFlux() {
       setMessage("Veuillez sélectionner un flux.");
       return;
     }
-
+    // Confirmation avant suppression
+    const confirmed = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer ce flux ?"
+    );
+    if (!confirmed) {
+      // Si l'utilisateur annule, on ne fait rien
+      return;
+    }
     try {
-      const response = await fetch(`http://localhost:8000/api/feed_sources/${selectedId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/feed_sources/${selectedId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData["description"] || "Erreur lors de la suppression");
+        throw new Error(
+          errorData["description"] || "Erreur lors de la suppression"
+        );
       }
 
       setMessage("Flux supprimé avec succès !");
@@ -64,7 +101,7 @@ export default function DeleteFlux() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-4 border rounded shadow">
+    <div className="max-w-xl mx-auto mt-10 p-4 border rounded shadow bg-orange-50">
       <h1 className="text-2xl font-bold mb-4">Supprimer un flux RSS</h1>
 
       {message && (
@@ -80,23 +117,31 @@ export default function DeleteFlux() {
           </label>
           <select
             id="feedSelect"
-            className="w-full p-2 border rounded bg-orange-50"
+            className="w-full p-2 border rounded bg-orange-100 hover:bg-orange-200"
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
             required
           >
-            {feeds.length === 0 && <option>Aucun flux disponible</option>}
-            {feeds.map((feed) => (
-              <option key={feed.id} value={feed.id}>
-                {feed.name}
+            {feeds.length === 0 ? (
+              <option key="no-feed" value="">
+                Aucun flux disponible
               </option>
-            ))}
+            ) : (
+              feeds.map((feed) => (
+                <option
+                  key={feed.id?.toString() || "feed.name"}
+                  value={feed.id}
+                >
+                  {feed.name}
+                </option>
+              ))
+            )}
           </select>
         </div>
 
         <button
           type="submit"
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 hover:scale-105 transition-all duration-300"
         >
           Supprimer
         </button>

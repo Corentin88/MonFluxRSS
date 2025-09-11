@@ -46,14 +46,14 @@ export default function AjoutFlux() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-4 border rounded shadow">
+    <div className="max-w-xl mx-auto mt-10 p-4 border rounded shadow bg-orange-50">
       <h1 className="text-2xl font-bold mb-4">Ajouter un flux RSS</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-medium">Nom</label>
           <input
             type="text"
-            className="w-full p-2 border rounded bg-orange-50"
+            className="w-full p-2 border rounded bg-orange-100 hover:bg-orange-200"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -64,7 +64,7 @@ export default function AjoutFlux() {
           <label className="block font-medium">URL</label>
           <input
             type="url"
-            className="w-full p-2 border rounded bg-orange-50"
+            className="w-full p-2 border rounded bg-orange-100 hover:bg-orange-200"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
@@ -74,7 +74,7 @@ export default function AjoutFlux() {
           <label className="block font-medium">Type</label>
           <select
             name="type"
-            className="w-full p-2 border rounded bg-orange-50"
+            className="w-full p-2 border rounded bg-orange-100 hover:bg-orange-200"
             value={type}
             onChange={(e) => setType(e.target.value)}
             required

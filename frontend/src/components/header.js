@@ -69,7 +69,7 @@ export default function Header() {
 
   // Ajout conditionnel du lien d'administration si l'utilisateur est connecté
   const nav = isLogged
-    ? [...navigation, { name: "Ajouter un flux", href: "/ajoutFlux" }]
+    ? [...navigation, { name: "Gestion des flux", href: "/ajoutFlux" }]
     : navigation;
 
   const handleUpdate = async () => {

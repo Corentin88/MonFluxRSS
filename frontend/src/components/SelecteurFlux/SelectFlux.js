@@ -6,7 +6,7 @@ export default function SelectFlux({ value, onChange }) {
     const [feeds, setFeeds] = useState([]);
   
     useEffect(() => {
-      fetch(`/api/feed_sources?type=${encodeURIComponent(value)}`)
+      fetch(`http://localhost:8000/api/feed_sources?type=${encodeURIComponent(value)}`)
         .then(res => res.json())
         .then(data => setFeeds(data['hydra:member'] || []));
     }, [value]);
