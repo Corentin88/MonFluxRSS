@@ -141,10 +141,10 @@ export default function ArticleFlux() {
   };
 
   // Gestion de la recherche
-  const handleSearch = (q) => {
+  const handleSearch = useCallback((q) => {
     setSearch(q);
     fetchArticles(1, selectedType, q);
-  };
+  }, [fetchArticles, selectedType]);
 
   // Rendu du composant
   return (

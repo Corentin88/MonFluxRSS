@@ -21,7 +21,7 @@ export default function Search({ onSearch }) {
 
     // Nettoyage : annule le timer si le composant est démonté ou si la requête change rapidement
     return () => clearTimeout(timer);
-  }, [query]); // Dépendance : la requête de recherche
+  }, [query, onSearch]); // Dépendance : la requête de recherche
 
   // Rendu du champ de recherche
   return (
