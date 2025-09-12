@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SelectFlux from "../SelecteurFlux/SelectFlux";
 import Search from "../SearchBar/search";
@@ -70,12 +70,12 @@ export default function ArticleFlux() {
   }
 
   // Fonction pour récupérer les articles depuis l'API
-  const fetchArticles = async (page = 1, type = selectedType, searchQuery = search) => {
-    // Construction de l'URL avec les paramètres de requête
-    const url = new URL("http://localhost:8000/api/articles");
-    url.searchParams.set("page", page);
-    if (type) url.searchParams.set("feedSource.type", type);
-    if (searchQuery) url.searchParams.set("q", searchQuery);
+  const fetchArticles = useCallback(
+    async (page = 1, type = selectedType, searchQuery = search) => {
+      const url = new URL("http://localhost:8000/api/articles");
+      url.searchParams.set("page", page);
+      if (type) url.searchParams.set("feedSource.type", type);
+      if (searchQuery) url.searchParams.set("q", searchQuery);
 
     setLoading(true);
     setError("");
@@ -111,12 +111,15 @@ export default function ArticleFlux() {
     } finally {
       setLoading(false);
     }
-  };
+  }, 
+  [selectedType, search]
+);
+
 
   // Effet pour charger les articles lorsque le type sélectionné change
   useEffect(() => {
-    fetchArticles(1, selectedType, search);
-  }, [selectedType]);
+    fetchArticles(1);
+  }, [fetchArticles]);
 
   // Effet pour gérer l'affichage du bouton de défilement
   useEffect(() => {
