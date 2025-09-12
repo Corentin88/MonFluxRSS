@@ -5,7 +5,7 @@ import ArticleFlux from "@/components/ArticlesFlux/articleflux";
 export default function Home() {
   return (
     // Conteneur principal avec une marge supérieure
-    <div className="mt-20">
+    <div className="mt-20 ">
       {/* Intégration du composant qui affiche les articles des flux RSS */}
       <ArticleFlux />
     </div>
