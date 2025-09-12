@@ -29,8 +29,8 @@ export default function Footer({ className = '' }) {
                 <Image 
                   src="/image/next.svg" 
                   alt="Next.js" 
-                  width={0}
-                  height={0}
+                  width={60}
+                  height={24}
                   style={{ width: 'auto', height: '15px' }}
                   className="mx-1"
                 />
@@ -38,8 +38,8 @@ export default function Footer({ className = '' }) {
                 <Image 
                   src="/image/Symfony.svg" 
                   alt="Symfony" 
-                  width={0}
-                  height={0}
+                  width={60}
+                  height={24}
                   style={{ width: 'auto', height: '30px' }}
                   className="mx-1"
                 />

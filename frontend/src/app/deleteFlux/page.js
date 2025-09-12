@@ -1,27 +1,34 @@
 "use client";
+// Importation des hooks nécessaires
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+// Composant principal pour la suppression d'un flux RSS
 export default function DeleteFlux() {
-  const [feeds, setFeeds] = useState([]);
-  const [selectedId, setSelectedId] = useState("");
-  const [message, setMessage] = useState(null);
+  // États pour gérer la liste des flux, la sélection et les messages
+  const [feeds, setFeeds] = useState([]);          // Liste des flux disponibles
+  const [selectedId, setSelectedId] = useState(""); // ID du flux sélectionné
+  const [message, setMessage] = useState(null);    // Message d'état (succès/erreur)
+  
+  // Hook de navigation de Next.js
   const router = useRouter();
 
-  // Récupérer la liste des flux au chargement
+  // Récupération de la liste des flux au chargement du composant
   useEffect(() => {
     async function fetchFeeds() {
       try {
+        // Récupération des flux depuis l'API
         const response = await fetch("http://localhost:8000/api/feed_sources", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
           },
         });
         if (!response.ok) throw new Error("Erreur lors du chargement des flux");
+        
         const data = await response.json();
         const feedList = data["member"] || [];
 
-        // Extraction des IDs depuis @id
+        // Nettoyage des données : extraction des IDs depuis @id si nécessaire
         const feedsWithId = feedList.map((feed) => {
           if (feed.id) return feed;
           if (feed["@id"]) {
@@ -35,6 +42,7 @@ export default function DeleteFlux() {
 
         setFeeds(feedsWithId);
 
+        // Sélection automatique du premier flux si disponible
         if (feedsWithId.length > 0) {
           setSelectedId(feedsWithId[0].id?.toString() || "");
         }
@@ -45,34 +53,25 @@ export default function DeleteFlux() {
     fetchFeeds();
   }, []);
 
-  // Affichage dans la console pour debug
-  // useEffect(() => {
-  //   if (feeds.length > 0) {
-  //     console.log("Premier feed:", feeds[0]);
-  //     console.log(
-  //       "Feeds IDs:",
-  //       feeds.map((f) => f.id)
-  //     );
-  //   }
-  // }, [feeds]);
-
+  // Gestion de la soumission du formulaire de suppression
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
 
+    // Validation de la sélection
     if (!selectedId) {
       setMessage("Veuillez sélectionner un flux.");
       return;
     }
-    // Confirmation avant suppression
+    
+    // Demande de confirmation avant suppression
     const confirmed = window.confirm(
       "Êtes-vous sûr de vouloir supprimer ce flux ?"
     );
-    if (!confirmed) {
-      // Si l'utilisateur annule, on ne fait rien
-      return;
-    }
+    if (!confirmed) return;
+    
     try {
+      // Envoi de la requête de suppression à l'API
       const response = await fetch(
         `http://localhost:8000/api/feed_sources/${selectedId}`,
         {
@@ -84,6 +83,7 @@ export default function DeleteFlux() {
         }
       );
 
+      // Vérification de la réponse
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
@@ -91,6 +91,7 @@ export default function DeleteFlux() {
         );
       }
 
+      // Message de succès et redirection
       setMessage("Flux supprimé avec succès !");
       setTimeout(() => {
         router.push("/");
@@ -100,16 +101,19 @@ export default function DeleteFlux() {
     }
   };
 
+  // Rendu du composant
   return (
     <div className="max-w-xl mx-auto mt-10 p-4 border rounded shadow bg-orange-50">
       <h1 className="text-2xl font-bold mb-4">Supprimer un flux RSS</h1>
 
+      {/* Affichage des messages d'état */}
       {message && (
         <div className="mb-4 text-center text-sm font-semibold text-red-600">
           {message}
         </div>
       )}
 
+      {/* Formulaire de sélection du flux à supprimer */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="feedSelect" className="block font-medium mb-1">
@@ -122,11 +126,13 @@ export default function DeleteFlux() {
             onChange={(e) => setSelectedId(e.target.value)}
             required
           >
+            {/* Affichage conditionnel selon la disponibilité des flux */}
             {feeds.length === 0 ? (
               <option key="no-feed" value="">
                 Aucun flux disponible
               </option>
             ) : (
+              // Liste des flux disponibles
               feeds.map((feed) => (
                 <option
                   key={feed.id?.toString() || "feed.name"}
@@ -139,6 +145,7 @@ export default function DeleteFlux() {
           </select>
         </div>
 
+        {/* Bouton de suppression */}
         <button
           type="submit"
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 hover:scale-105 transition-all duration-300"

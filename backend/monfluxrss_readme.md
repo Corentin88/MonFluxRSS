@@ -301,8 +301,10 @@ Content-Type: application/ld+json
 
 ## ✅ Remarques
 
-- La suppression automatique des articles anciens (7 jours) est prévue mais non encore automatisée (CRON à ajouter).
+- La suppression automatique des articles de plus de 7 jours est maintenant implémentée dans le service [ArticleFetcherService](cci:2://file:///d:/wamp64/www/MonFluxRSS/backend/src/Service/ArticleFetcherService.php:20:0-222:1)
+- La recherche avancée est disponible via le paramètre `?q=` sur les endpoints d'API
 - Le projet est prêt à être intégré avec un frontend React/Next.js
+- Un filtre personnalisé [OrSearchFilter](cci:2://file:///d:/wamp64/www/MonFluxRSS/backend/src/Service/Filters/OrSearchFilter.php:15:0-78:1) permet de rechercher sur plusieurs champs (titre et description)
 
 ---
 

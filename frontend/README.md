@@ -4,197 +4,115 @@ Ce projet Next.js constitue le frontend de MonFluxRSS, une application qui conso
 
 ## 🚀 Fonctionnalités
 
-- **Affichage des articles** : Liste paginée des articles avec chargement automatique
-- **Recherche** : Recherche en temps réel sur les titres et descriptions
-- **Filtrage** : Par type de flux (ex: veille techno)
-- **Authentification** : Connexion sécurisée avec JWT
-- **Mise à jour** : Bouton pour forcer la mise à jour des articles
-- **Interface** : Design responsive avec Tailwind CSS
-- **Navigation** : Barre de navigation dynamique avec gestion du scroll
+- **Gestion des articles** :
+  - Affichage des articles avec pagination
+  - Mise en avant des vidéos YouTube intégrées
+  - Affichage des métadonnées (date, source, etc.)
+
+- **Gestion des flux RSS** :
+  - Ajout de nouveaux flux RSS
+  - Suppression des flux existants
+  - Filtrage par catégorie (veille techno, jeux vidéo, cuisine, science et spatial)
+
+- **Recherche** :
+  - Recherche en temps réel dans les titres et descriptions
+  - Débogage intégré pour une meilleure expérience utilisateur
+
+- **Authentification** :
+  - Connexion sécurisée avec JWT
+  - Déconnexion automatique à l'expiration du token
+  - Protection des routes sensibles
+
+- **Interface utilisateur** :
+  - Design responsive avec Tailwind CSS
+  - Navigation intuitive
+  - Retour visuel lors des interactions
+  - Bouton de retour en haut de page
 
 ## 🛠️ Technologies
 
 - **Next.js 14** avec App Router
-- **React 18+** avec Hooks
+- **React 18+** avec Hooks personnalisés
 - **Tailwind CSS** pour le styling
-- **SWR** pour la gestion des données
-- **Headless UI** pour les composants accessibles
-- **Heroicons** pour les icônes
+- **Context API** pour la gestion d'état globale
+- **Fetch API** pour les appels réseau
 - **JWT** pour l'authentification
+- **HTML5** et **CSS3** natifs
 
-## 📦 Installation
+## 📦 Structure du projet
+
+```
+src/
+├── app/                 # Pages et routes
+│   ├── login/           # Page de connexion
+│   ├── ajoutFlux/       # Page d'ajout de flux
+│   └── sources/         # Gestion des sources
+│
+├── components/          # Composants réutilisables
+│   ├── ArticlesFlux/    # Affichage des articles
+│   ├── DataUsers/       # Gestion des utilisateurs
+│   ├── ListesFlux/      # Liste des flux disponibles
+│   ├── SearchBar/       # Barre de recherche
+│   └── SelecteurFlux/   # Sélecteur de catégorie
+│
+├── context/             # Contexte React
+│   └── AuthContext.js   # Gestion de l'authentification
+│
+└── services/            # Logique métier
+    └── api.js           # Configuration des appels API
+```
+
+## 🔒 Sécurité
+
+- Stockage sécurisé du token JWT dans le localStorage
+- Protection des routes sensibles
+- Gestion automatique de la déconnexion à l'expiration du token
+- Validation côté client et serveur
+
+## 🚀 Démarrage rapide
 
 ### Prérequis
 
 - Node.js 18+
 - npm, yarn ou pnpm
-- Accès à l'API backend (voir README du backend)
+- Accès à l'API backend Symfony
 
-### Étapes d'installation
+### Installation
 
-1. **Cloner le dépôt** :
+1. Cloner le dépôt
+2. Installer les dépendances :
+   ```bash
+   npm install
+   # ou
+   yarn
+   # ou
+   pnpm install
+   ```
 
-```bash
-git clone https://github.com/Corentin88/MonFluxRSS.git
-cd MonFluxRSS/frontend/frontend
-```
+3. Configurer les variables d'environnement :
+   Créer un fichier `.env.local` à la racine du projet avec :
+   ```
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   ```
 
-2. **Installer les dépendances** :
+4. Démarrer le serveur de développement :
+   ```bash
+   npm run dev
+   # ou
+   yarn dev
+   # ou
+   pnpm dev
+   ```
 
-```bash
-npm install
-# ou
-yarn install
-# ou
-pnpm install
-```
+5. Ouvrir [http://localhost:3000](http://localhost:3000) dans votre navigateur
 
-3. **Configurer l'environnement** :
+## 📝 Notes de développement
 
-Créer un fichier `.env.local` à la racine :
+- Le projet utilise le système de routage de Next.js 14 (App Router)
+- Les appels API sont centralisés dans le dossier `services`
+- L'authentification est gérée via un contexte React
+- Le design est entièrement personnalisé avec Tailwind CSS
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
-```
+## � Licence
 
-4. **Démarrer le serveur de développement** :
-
-```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-```
-
-L'application sera disponible sur [http://localhost:3000](http://localhost:3000)
-
-## 🚀 Utilisation
-
-### Authentification
-
-1. Accédez à la page de connexion `/login`
-2. Entrez vos identifiants (email/mot de passe)
-3. Vous serez redirigé vers la page d'accueil après authentification réussie
-
-### Navigation
-
-- **Page d'accueil** : Affiche la liste des articles avec pagination
-- **Barre de recherche** : Recherche en temps réel dans les titres et descriptions
-- **Filtres** : Filtrez les articles par type de flux
-- **Mise à jour** : Bouton pour forcer une actualisation des articles
-
-## 🏗️ Structure du projet
-
-```
-frontend/
-├── src/
-│   ├── app/                    # Dossier principal de l'application Next.js
-│   │   ├── ajoutFlux/         # Page d'ajout de flux RSS
-│   │   ├── deleteFlux/        # Page de suppression de flux
-│   │   ├── login/             # Page de connexion
-│   │   ├── sources/           # Page de gestion des sources
-│   │   ├── globals.css        # Styles globaux
-│   │   ├── layout.js          # Layout principal de l'application
-│   │   └── page.js            # Page d'accueil
-│   │
-│   ├── components/            # Composants réutilisables
-│   │   ├── ArticlesFlux/      # Composant d'affichage des articles
-│   │   ├── DataUsers/         # Composant des données utilisateur
-│   │   ├── ListesFlux/        # Liste des flux disponibles
-│   │   ├── SearchBar/         # Barre de recherche
-│   │   ├── SelecteurFlux/     # Sélecteur de flux
-│   │   ├── footer.js          # Pied de page
-│   │   └── header.js          # En-tête de l'application
-│   │
-│   ├── context/               # Contextes React
-│   │   └── AuthContext.js     # Gestion de l'authentification
-│   │
-│   ├── hooks/                 # Hooks personnalisés
-│   │
-│   └── services/              # Services pour les appels API
-│
-├── public/                    # Fichiers statiques
-├── .env*                     # Fichiers de configuration d'environnement
-├── next.config.mjs           # Configuration Next.js
-└── tailwind.config.js        # Configuration Tailwind CSS
-```
-
-### Description des dossiers clés :
-
-- **src/app** : Contient les pages de l'application Next.js avec le nouveau routeur App Router
-  - `page.js` : Page d'accueil qui affiche les articles
-  - `login/` : Gestion de l'authentification
-  - `ajoutFlux/` et `deleteFlux/` : Gestion des flux RSS
-  - `sources/` : Liste et gestion des sources de flux
-
-- **src/components** : Composants réutilisables de l'application
-  - `ArticlesFlux/` : Affiche la liste des articles
-  - `ListesFlux/` : Affiche et gère les flux abonnés
-  - `SearchBar/` : Barre de recherche pour filtrer les articles
-  - `header.js` et `footer.js` : En-tête et pied de page de l'application
-
-- **src/context** : Gestion de l'état global
-  - `AuthContext.js` : Gère l'état d'authentification de l'utilisateur
-
-- **src/services** : Contient les appels API pour communiquer avec le backend
-
-## � Gestion des données
-
-### Récupération des articles
-
-Les articles sont récupérés via l'API backend avec pagination et filtres :
-
-```javascript
-const { data, error } = useSWR(
-  `/articles?page=${page}&title=${searchQuery}&type=${filterType}`,
-  fetcher
-);
-```
-
-### Authentification
-
-Le token JWT est stocké dans le localStorage et inclus dans les en-têtes des requêtes :
-
-```javascript
-const response = await fetch(`${API_URL}/protected-route`, {
-  headers: {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  }
-});
-```
-
-## 🌐 Déploiement
-
-### Build pour la production
-
-```bash
-npm run build
-```
-
-### Démarrer le serveur de production
-
-```bash
-npm start
-```
-
-### Variables d'environnement
-
-| Variable | Description | Valeur par défaut |
-|----------|-------------|-------------------|
-| `NEXT_PUBLIC_API_URL` | URL de l'API backend | `http://localhost:8000/api` |
-
-## ✅ Tests
-
-Pour lancer les tests :
-
-```bash
-npm test
-```
-
-
-## 📞 Contact
-
-
-Lien du projet : [https://github.com/Corentin88/MonFluxRSS](https://github.com/Corentin88/MonFluxRSS)
+Ce projet est sous licence MIT.

@@ -1,74 +1,95 @@
 "use client";
 
+// Importation du hook d'authentification pour gérer les tokens JWT
 import { useAuth } from "@/context/AuthContext";
 
-// Fonction utilitaire pour effectuer les requêtes API
+/**
+ * Fonction utilitaire pour effectuer des requêtes HTTP authentifiées
+ * Gère automatiquement l'ajout du token JWT et la gestion des erreurs
+ * @param {string} url - L'URL de l'API (sans le domaine de base)
+ * @param {Object} options - Options de la requête fetch
+ * @returns {Promise<Object>} Les données JSON de la réponse
+ * @throws {Error} En cas d'erreur HTTP ou de problème de connexion
+ */
 async function fetchWithAuth(url, options = {}) {
-  // Récupérer le token JWT du localStorage
+  // Récupération du token JWT depuis le localStorage (uniquement côté client)
   const token = typeof window !== 'undefined' ? localStorage.getItem("jwt") : null;
   
-  // Préparer les en-têtes
+  // Configuration des en-têtes par défaut
   const headers = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...options.headers, // Permet de surcharger les en-têtes
   };
 
-  // Ajouter le token d'authentification si disponible
+  // Ajout du token d'authentification s'il existe
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
+    // Exécution de la requête avec l'URL complète et les options
     const response = await fetch(`http://localhost:8000${url}`, {
       ...options,
       headers,
-      credentials: 'include', // Important pour les cookies de session
+      credentials: 'include', // Important pour les cookies de session (CSRF, etc.)
     });
 
-    // Si la réponse est 401 (Non autorisé), déconnecter l'utilisateur
+    // Gestion des réponses non autorisées (401)
     if (response.status === 401) {
-      // Vérifier si on est côté client avant d'utiliser localStorage
+      // Nettoyage côté client uniquement
       if (typeof window !== 'undefined') {
-        // Supprimer le token du localStorage
         localStorage.removeItem("jwt");
         
-        // Appeler la fonction de déconnexion du contexte d'authentification
-        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-          // Rediriger vers la page de connexion
+        // Redirection vers la page de connexion si pas déjà dessus
+        if (window.location.pathname !== '/login') {
           window.location.href = '/login';
         }
       }
       
-      // Lancer une erreur avec un message clair
+      // Lancement d'une erreur avec un message clair
       const error = new Error("Votre session a expiré. Veuillez vous reconnecter.");
       error.status = 401;
       throw error;
     }
 
-    // Si la réponse n'est pas OK, lancer une erreur avec le message d'erreur
+    // Gestion des autres erreurs HTTP
     if (!response.ok) {
+      // Tentative de récupération du message d'erreur du serveur
       const errorData = await response.json().catch(() => ({}));
       const error = new Error(errorData.message || 'Une erreur est survenue');
       error.status = response.status;
       throw error;
     }
 
-    // Si tout va bien, retourner les données JSON
+    // Retour des données JSON en cas de succès
     return response.json();
   } catch (error) {
-    console.error('API call failed:', error);
-    // Si ce n'est pas une erreur 401, on la propage
+    console.error('Erreur lors de l\'appel API:', error);
+    // On ne propage que les erreurs qui ne sont pas des 401 (déjà gérées)
     if (error.status !== 401) {
       throw error;
     }
-    // Pour les erreurs 401, on a déjà redirigé, on ne fait rien de plus
   }
 }
 
-// Méthodes HTTP de base
+/**
+ * Objet API exposant les méthodes HTTP de base
+ * Chaque méthode appelle fetchWithAuth avec la méthode HTTP appropriée
+ */
 const api = {
+  /**
+   * Effectue une requête GET
+   * @param {string} url - L'URL de la ressource
+   * @param {Object} options - Options supplémentaires pour la requête
+   */
   get: (url, options = {}) => fetchWithAuth(url, { ...options, method: 'GET' }),
   
+  /**
+   * Effectue une requête POST
+   * @param {string} url - L'URL de la ressource
+   * @param {Object} data - Les données à envoyer (seront converties en JSON)
+   * @param {Object} options - Options supplémentaires pour la requête
+   */
   post: (url, data, options = {}) => 
     fetchWithAuth(url, {
       ...options,
@@ -80,6 +101,12 @@ const api = {
       },
     }),
 
+  /**
+   * Effectue une requête PUT
+   * @param {string} url - L'URL de la ressource
+   * @param {Object} data - Les données à mettre à jour (seront converties en JSON)
+   * @param {Object} options - Options supplémentaires pour la requête
+   */
   put: (url, data, options = {}) => 
     fetchWithAuth(url, {
       ...options,
@@ -91,6 +118,11 @@ const api = {
       },
     }),
 
+  /**
+   * Effectue une requête DELETE
+   * @param {string} url - L'URL de la ressource à supprimer
+   * @param {Object} options - Options supplémentaires pour la requête
+   */
   delete: (url, options = {}) => 
     fetchWithAuth(url, { ...options, method: 'DELETE' }),
 };

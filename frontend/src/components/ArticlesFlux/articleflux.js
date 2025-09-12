@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import SelectFlux from "../SelecteurFlux/SelectFlux";
 import Search from "../SearchBar/search";
 
+// Composant principal pour afficher la liste des articles
+// Gère le chargement, la pagination, la recherche et l'affichage des articles
 export default function ArticleFlux() {
+  // États pour gérer les erreurs, les articles, le chargement, etc.
   const [error, setError] = useState("");
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -12,18 +15,21 @@ export default function ArticleFlux() {
   const [prevPage, setPrevPage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const itemsPerPage = 30;
-  const [selectedType, setSelectedType] = useState("veille techno");
-  const [search, setSearch] = useState("");
-  const [showScrollButton, setShowScrollButton] = useState(false);
+  const itemsPerPage = 30; // Nombre d'articles par page
+  const [selectedType, setSelectedType] = useState("veille techno"); // Type de flux sélectionné
+  const [search, setSearch] = useState(""); // Terme de recherche
+  const [showScrollButton, setShowScrollButton] = useState(false); // Afficher le bouton de défilement
 
   const router = useRouter();
 
+  // Fonction pour générer les numéros de page à afficher dans la pagination
   const getPageNumbers = () => {
     const pages = [];
+    // Si moins de 7 pages, on les affiche toutes
     if (totalPages <= 7) {
       for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
+      // Sinon, on ajoute des points de suspension pour les pages éloignées
       pages.push(1);
       if (currentPage > 4) pages.push("...");
       const startPage = Math.max(2, currentPage - 1);
@@ -35,12 +41,13 @@ export default function ArticleFlux() {
     return pages;
   };
 
+  // Fonction pour tronquer le texte trop long
   function truncateText(text, maxLength = 200) {
     if (!text) return "";
     return text.length > maxLength ? text.slice(0, maxLength) + "…" : text;
   }
 
-  // Fonction pour extraire l'ID YouTube
+  // Fonction pour extraire l'ID d'une vidéo YouTube à partir d'une URL
   function extractYouTubeId(url) {
     try {
       const parsedUrl = new URL(url);
@@ -62,7 +69,9 @@ export default function ArticleFlux() {
     }
   }
 
+  // Fonction pour récupérer les articles depuis l'API
   const fetchArticles = async (page = 1, type = selectedType, searchQuery = search) => {
+    // Construction de l'URL avec les paramètres de requête
     const url = new URL("http://localhost:8000/api/articles");
     url.searchParams.set("page", page);
     if (type) url.searchParams.set("feedSource.type", type);
@@ -72,6 +81,7 @@ export default function ArticleFlux() {
     setError("");
     let pageNumber = page;
 
+    // Gestion de la pagination côté client
     if (typeof page === "string") {
       try {
         const url = new URL("http://localhost:8000" + page);
@@ -82,12 +92,14 @@ export default function ArticleFlux() {
     }
 
     try {
+      // Appel à l'API pour récupérer les articles
       const res = await fetch(url.toString(), {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
       if (!res.ok) throw new Error("Articles non trouvés");
 
+      // Mise à jour de l'état avec les données reçues
       const data = await res.json();
       setArticles(data.member || []);
       setNextPage(data.view?.next || "");
@@ -101,10 +113,12 @@ export default function ArticleFlux() {
     }
   };
 
+  // Effet pour charger les articles lorsque le type sélectionné change
   useEffect(() => {
     fetchArticles(1, selectedType, search);
   }, [selectedType]);
 
+  // Effet pour gérer l'affichage du bouton de défilement
   useEffect(() => {
     const checkScroll = () => {
       setShowScrollButton(window.scrollY > 300);
@@ -113,33 +127,44 @@ export default function ArticleFlux() {
     return () => window.removeEventListener("scroll", checkScroll);
   }, []);
 
+  // Fonction pour faire défiler vers le haut de la page
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Gestion du clic sur un article
   const handleClick = (articleId) => {
     router.push(`/articles/${articleId}`);
   };
 
+  // Gestion de la recherche
   const handleSearch = (q) => {
     setSearch(q);
     fetchArticles(1, selectedType, q);
   };
 
+  // Rendu du composant
   return (
     <>
+      {/* Sélecteur de flux */}
       <div className="mb-4">
         <SelectFlux value={selectedType} onChange={setSelectedType} />
       </div>
+      
+      {/* Barre de recherche */}
       <div className="mb-4">
         <Search onSearch={handleSearch} />
       </div>
+      
+      {/* Conteneur principal */}
       <div className="flex flex-col items-center justify-center w-full px-4">
         <h1 className="text-xl font-bold mb-4">Articles</h1>
 
+        {/* Affichage du chargement ou des erreurs */}
         {loading && <p>Chargement...</p>}
         {error && <p className="text-gray-800">{error}</p>}
 
+        {/* Liste des articles */}
         <ul className="space-y-4 w-full break-words inline-block">
           {articles.map(({ id, title, publishedAt, description, feedSource, link }) => {
             const videoId = extractYouTubeId(link);
@@ -148,13 +173,22 @@ export default function ArticleFlux() {
             return (
               <li
                 key={id}
+                onClick={() => window.open(link, '_blank', 'noopener,noreferrer')}
                 className="cursor-pointer border p-4 rounded bg-orange-50 hover:bg-orange-200 hover:scale-104 transition-all duration-200 w-full shadow-lg"
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    window.open(link, '_blank', 'noopener,noreferrer');
+                  }
+                }}
               >
                 <h2 className="text-lg font-semibold">{title}</h2>
                 <p className="text-sm text-gray-600">
                   {new Date(publishedAt).toLocaleDateString()}
                 </p>
 
+                {/* Affichage conditionnel pour les vidéos YouTube */}
                 {isYouTube ? (
                   <div className="mt-4">
                     <iframe
@@ -165,25 +199,26 @@ export default function ArticleFlux() {
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                      onClick={(e) => e.stopPropagation()} // Empêche la propagation du clic au parent
                     />
                   </div>
                 ) : (
+                  // Affichage du contenu de l'article
                   <p
                     className="description-content mt-1 text-gray-700 text-sm bg-gray-50"
                     dangerouslySetInnerHTML={{ __html: description }}
                   />
                 )}
 
+                {/* Affichage de la source de l'article */}
                 <p className="mt-2 text-xs italic text-gray-600">
                   Source: {feedSource?.name || "Source inconnue"}
                 </p>
 
+                {/* Lien vers l'article original (sauf pour les vidéos YouTube) */}
                 {!isYouTube && (
                   <p className="mt-2 text-xs italic text-gray-600">
-                    Lien:{" "}
-                    <a href={link} target="_blank" rel="noopener noreferrer">
-                      {link}
-                    </a>
+                    Lien: {link}
                   </p>
                 )}
               </li>
@@ -191,6 +226,7 @@ export default function ArticleFlux() {
           })}
         </ul>
 
+        {/* Pagination */}
         <div className="flex justify-center items-center mt-4">
           {getPageNumbers().map((page, index) =>
             page === "..." ? (
@@ -218,6 +254,7 @@ export default function ArticleFlux() {
         </div>
       </div>
 
+      {/* Bouton de retour en haut de page */}
       {showScrollButton && (
         <button
           onClick={scrollToTop}

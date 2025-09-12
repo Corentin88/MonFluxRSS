@@ -8,20 +8,26 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
 
 /**
- * OrSearchFilter is a custom filter for API Platform that allows searching on multiple properties.
+ * Filtre de recherche personnalisé pour effectuer des recherches sur plusieurs propriétés
+ * 
+ * Ce filtre permet d'effectuer une recherche sur les champs 'title' et 'description'
+ * en utilisant l'opérateur logique OU.
  */
 final class OrSearchFilter extends AbstractFilter
 {
     /**
-     * Applies the filter to the query builder.
+     * Applique le filtre de recherche à la requête
+     * 
+     * Cette méthode est appelée pour chaque propriété à filtrer. Elle recherche
+     * le paramètre 'q' et applique une condition LIKE sur les champs 'title' et 'description'.
      *
-     * @param string $property The property being filtered.
-     * @param mixed $value The value to filter by.
-     * @param QueryBuilder $queryBuilder The query builder to apply the filter to.
-     * @param QueryNameGeneratorInterface $queryNameGenerator The query name generator.
-     * @param string $resourceClass The resource class.
-     * @param Operation|null $operation The operation.
-     * @param array $context The context.
+     * @param string $property Nom de la propriété à filtrer
+     * @param mixed $value Valeur de recherche
+     * @param QueryBuilder $queryBuilder Constructeur de requête Doctrine
+     * @param QueryNameGeneratorInterface $queryNameGenerator Générateur de noms de paramètres
+     * @param string $resourceClass Classe de la ressource
+     * @param Operation|null $operation Opération en cours
+     * @param array $context Contexte de la requête
      *
      * @return void
      */
@@ -34,13 +40,17 @@ final class OrSearchFilter extends AbstractFilter
         ?Operation $operation = null,
         array $context = []
     ): void {
+        // Ne traite que le paramètre 'q' avec une valeur non nulle
         if ($property !== 'q' || $value === null) {
             return;
         }
 
+        // Récupère l'alias de la table principale
         $alias = $queryBuilder->getRootAliases()[0];
+        // Génère un nom de paramètre unique pour éviter les collisions
         $parameterName = $queryNameGenerator->generateParameterName($property);
 
+        // Ajoute une condition OU sur les champs title et description
         $queryBuilder
             ->andWhere($queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like("$alias.title", ":$parameterName"),
@@ -50,11 +60,10 @@ final class OrSearchFilter extends AbstractFilter
     }
 
     /**
-     * Returns the filter description.
-     *
-     * @param string $resourceClass The resource class.
-     *
-     * @return array The filter description.
+     * Retourne la description du filtre pour la documentation de l'API
+     * 
+     * @param string $resourceClass Classe de la ressource
+     * @return array Description du filtre au format attendu par API Platform
      */
     public function getDescription(string $resourceClass): array
     {
@@ -63,7 +72,7 @@ final class OrSearchFilter extends AbstractFilter
                 'property' => null,
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Recherche globale sur title OU description',
+                'description' => 'Recherche globale sur les champs titre OU description',
             ],
         ];
     }
