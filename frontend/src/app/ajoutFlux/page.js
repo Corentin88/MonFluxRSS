@@ -52,6 +52,11 @@ export default function AjoutFlux() {
       setUrl("");
       setType("");
       // Redirection vers la page d'accueil après 2 secondes
+      // IMPORTANT: Déclencher l'événement de rafraîchissement
+      // Envoyer un événement personnalisé que la page Sources peut écouter
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('fluxAdded'));
+      }
       setTimeout(() => {
         router.push("/");
       }, 2000);

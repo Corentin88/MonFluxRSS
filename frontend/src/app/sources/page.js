@@ -1,14 +1,29 @@
 // Indique que ce composant s'exécute côté client
 "use client";
 // Importation des hooks et composants nécessaires
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ListeFlux from "@/components/ListesFlux/ListeFlux";
 
 // Composant principal pour afficher les sources de flux RSS
 export default function Sources() {
     // État pour stocker les flux groupés par type
     const [flux, setFlux] = useState({});
-  
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+   // Écouter l'événement d'ajout de flux
+   useEffect(() => {
+    const handleFluxAdded = () => {
+      console.log("Nouveau flux détecté, rafraîchissement...");
+      setRefreshTrigger(prev => prev + 1);
+    };
+
+    // Ajouter l'écouteur d'événement
+    window.addEventListener('fluxAdded', handleFluxAdded);
+
+    // Nettoyer l'écouteur lors du démontage
+    return () => {
+      window.removeEventListener('fluxAdded', handleFluxAdded);
+    };
+  }, []);
     return (
       <>
         {/* En-tête de la page */}
@@ -18,7 +33,7 @@ export default function Sources() {
         </div>
   
         {/* Composant qui charge et affiche la liste des flux */}
-        <ListeFlux onData={setFlux} />
+        <ListeFlux onData={setFlux} refreshTrigger={refreshTrigger}/>
   
         {/* Section d'affichage des flux */}
         <div className="w-full px-4">
