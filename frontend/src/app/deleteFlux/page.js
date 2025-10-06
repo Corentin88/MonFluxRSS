@@ -2,7 +2,7 @@
 // Importation des hooks nécessaires
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import { BASE_URL } from "@/services/api";
 // Composant principal pour la suppression d'un flux RSS
 export default function DeleteFlux() {
   // États pour gérer la liste des flux, la sélection et les messages
@@ -26,7 +26,7 @@ export default function DeleteFlux() {
         // Boucle pour récupérer TOUTES les pages
         while (hasMorePages) {
           const response = await fetch(
-            `http://localhost:8000/api/feed_sources?page=${currentPage}`,
+            `${BASE_URL}/api/feed_sources?page=${currentPage}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -101,7 +101,7 @@ export default function DeleteFlux() {
     try {
       // Envoi de la requête de suppression à l'API
       const response = await fetch(
-        `http://localhost:8000/api/feed_sources/${selectedId}`,
+        `${BASE_URL}/api/feed_sources/${selectedId}`,
         {
           method: "DELETE",
           headers: {

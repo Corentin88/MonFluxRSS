@@ -1,7 +1,7 @@
 "use client";
 // Importation des hooks nécessaires depuis React
 import { useState, useEffect } from 'react';
-
+import { BASE_URL } from "@/services/api";
 /**
  * Composant SelectFlux - Affiche et gère la sélection des types de flux
  * @param {string} value - La valeur actuellement sélectionnée
@@ -18,7 +18,7 @@ export default function SelectFlux({ value, onChange }) {
     // Effet pour charger les flux correspondant au type sélectionné
     useEffect(() => {
       // Appel à l'API pour récupérer les flux du type sélectionné
-      fetch(`http://localhost:8000/api/feed_sources?type=${encodeURIComponent(value)}`)
+      fetch(`${BASE_URL}/api/feed_sources?type=${encodeURIComponent(value)}`)
         .then(res => res.json())
         // Mise à jour de l'état avec les données reçues (format Hydra ou standard)
         .then(data => setFeeds(data['hydra:member'] || []));

@@ -11,6 +11,7 @@ import { useAuth } from "@/context/AuthContext";
  * @returns {Promise<Object>} Les données JSON de la réponse
  * @throws {Error} En cas d'erreur HTTP ou de problème de connexion
  */
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 async function fetchWithAuth(url, options = {}) {
   // Récupération du token JWT depuis le localStorage (uniquement côté client)
   const token = typeof window !== 'undefined' ? localStorage.getItem("jwt") : null;
@@ -28,7 +29,7 @@ async function fetchWithAuth(url, options = {}) {
 
   try {
     // Exécution de la requête avec l'URL complète et les options
-    const response = await fetch(`http://localhost:8000${url}`, {
+    const response = await fetch(`${BASE_URL}${url}`, {
       ...options,
       headers,
       credentials: 'include', // Important pour les cookies de session (CSRF, etc.)
@@ -126,5 +127,5 @@ const api = {
   delete: (url, options = {}) => 
     fetchWithAuth(url, { ...options, method: 'DELETE' }),
 };
-
+export { BASE_URL };
 export default api;

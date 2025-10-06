@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import SelectFlux from "../SelecteurFlux/SelectFlux";
 import Search from "../SearchBar/search";
-
+import { BASE_URL } from "@/services/api";
 // Composant principal pour afficher la liste des articles
 // Gère le chargement, la pagination, la recherche et l'affichage des articles
 export default function ArticleFlux() {
@@ -72,7 +72,7 @@ export default function ArticleFlux() {
   // Fonction pour récupérer les articles depuis l'API
   const fetchArticles = useCallback(
     async (page = 1, type = selectedType, searchQuery = search) => {
-      const url = new URL("http://localhost:8000/api/articles");
+      const url = new URL(`${BASE_URL}/api/articles`);
       url.searchParams.set("page", page);
       if (type) url.searchParams.set("feedSource.type", type);
       if (searchQuery) url.searchParams.set("q", searchQuery);
@@ -84,7 +84,7 @@ export default function ArticleFlux() {
     // Gestion de la pagination côté client
     if (typeof page === "string") {
       try {
-        const url = new URL("http://localhost:8000" + page);
+        const url = new URL(`${BASE_URL}` + page);
         pageNumber = parseInt(url.searchParams.get("page") || "1");
       } catch {
         pageNumber = 1;

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 // Importation du composant Link pour la navigation
 import Link from "next/link";
-
+import { BASE_URL } from "@/services/api";
 // Composant principal pour l'ajout d'un flux RSS
 export default function AjoutFlux() {
   // États pour gérer les données du formulaire
@@ -26,7 +26,7 @@ export default function AjoutFlux() {
 
     try {
       // Envoi de la requête POST à l'API pour créer un nouveau flux
-      const response = await fetch("http://localhost:8000/api/feed_sources", {
+      const response = await fetch(`${BASE_URL}/api/feed_sources`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

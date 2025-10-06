@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
+import { BASE_URL } from "@/services/api";
 /**
  * Composant ListeFlux - Récupère et groupe les flux par catégorie
  * @param {Function} onData - Callback appelé avec les données des flux groupés
@@ -20,7 +20,7 @@ export default function ListeFlux({ onData, refreshTrigger = 0 }) {
         // Boucle pour récupérer TOUTES les pages
         while (hasMorePages) {
           const response = await fetch(
-            `http://localhost:8000/api/feed_sources?page=${currentPage}`,
+            `${BASE_URL}/api/feed_sources?page=${currentPage}`,
             {
               method: "GET",
               headers: {
