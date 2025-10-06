@@ -10,7 +10,7 @@ export default function Installation() {
       <div className="mt-20 flex flex-col items-center justify-center w-full px-4">
         <h1>Installation</h1>
         <p>En cours de création...</p>
-        <p>Vous pouvez lire README.md (front-end et back-end(création d'un compte, gestion des flux)) sur Github</p>
+        <p>Vous pouvez lire README.md (front-end et back-end(création d&apos;un compte, gestion des flux)) sur Github</p>
       </div>
     );
 
